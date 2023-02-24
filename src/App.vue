@@ -14,7 +14,7 @@ import HelloWorld from "./components/HelloWorld.vue";
     />
 
     <div class="wrapper">
-      <HelloWorld msg="You did it! 2" />
+      <HelloWorld msg="You did it! 3" />
     </div>
   </header>
 
