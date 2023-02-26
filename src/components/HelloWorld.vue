@@ -1,17 +1,29 @@
 <script setup lang="ts">
+import { useDatabase, useDatabaseList } from "vuefire";
+import { ref as fbdbref } from "firebase/database";
+
 defineProps<{
-  msg: string
-}>()
+  msg: string;
+}>();
+
+const db = useDatabase();
+
+type Count = { cnt: number };
+const countsList = useDatabaseList<Count>(fbdbref(db, "counts"));
 </script>
 
 <template>
   <div class="greetings">
     <h1 class="green">{{ msg }}</h1>
     <h3>
-      You’ve successfully created a project with
+      You've successfully created a project with 2
       <a href="https://vitejs.dev/" target="_blank" rel="noopener">Vite</a> +
       <a href="https://vuejs.org/" target="_blank" rel="noopener">Vue 3</a>.
     </h3>
+
+    <li v-for="c in countsList" :key="c.id">
+      <span>{{ c.cnt + 1 }}</span>
+    </li>
   </div>
 </template>
 

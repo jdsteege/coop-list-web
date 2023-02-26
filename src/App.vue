@@ -14,7 +14,7 @@ import TheWelcome from "./components/TheWelcome.vue";
     />
 
     <div class="wrapper">
-      <HelloWorld msg="You did it! Welcome to Coop Lists" />
+      <HelloWorld msg="Welcome to Coop Lists" />
     </div>
   </header>
 
