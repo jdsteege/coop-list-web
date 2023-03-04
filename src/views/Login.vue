@@ -23,8 +23,9 @@ onMounted(async () => {
 
     } else {
         // https://firebase.google.com/docs/auth/web/google-signin
-        signInWithRedirect(useFirebaseAuth()!, new GoogleAuthProvider());
-
+        const provider = new GoogleAuthProvider();
+        provider.setCustomParameters({ prompt: "select_account" });
+        signInWithRedirect(useFirebaseAuth()!, provider);
 
     }
 });
