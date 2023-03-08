@@ -42,6 +42,8 @@ onMounted(async () => {
 </script>
 
 <template>
+    <router-link to="/lists">Back to lists</router-link>
+
     <p>listId: {{ requestedListId }}</p>
     <div v-if="isLoading">
         <p>Loading...</p>

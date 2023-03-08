@@ -15,11 +15,14 @@ function signoutfromgoogle() {
 <template>
   <div>This is the Home page</div>
   <div v-if="user">
-    <p>Welcome {{ user.email }}</p>
-    <button @click="signoutfromgoogle">Sign Out</button>
+    <div>
+      <p>Welcome {{ user.email }}</p>
+    </div>
+    <div><button><router-link to="/lists">View your lists</router-link></button></div>
+    <div><button @click="signoutfromgoogle">Sign Out</button></div>
   </div>
   <div v-else>
     <p>Not signed in</p>
-    <router-link to="/login">Login</router-link>
+    <router-link to="/login?redirect=/lists">Login</router-link>
   </div>
 </template>

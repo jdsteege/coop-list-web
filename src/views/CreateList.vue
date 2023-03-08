@@ -1,43 +1,30 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { useFirebaseAuth, getCurrentUser } from "vuefire";
-import { getDatabase, ref as dbRef, onValue, off, push, set } from "firebase/database";
+import { getDatabase, push, ref as dbRef } from "firebase/database";
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { useCurrentUser } from "vuefire";
+import type { TaskList } from '../customTypes';
 
-// type for lists
-interface List {
-    id: string;
-    name: string;
-}
-
-const isLoading = ref(true);
+const router = useRouter();
+const currentUser = useCurrentUser();
 
 const listName = ref("");
 
 function goToList(listId: string) {
-    const router = useRouter();
     router.push(`/list/${listId}`);
 }
 
-async function createList() {
+function createList() {
     // create a new list and send it to firebase rtdb
-    let newList: List = {
+    let newList: TaskList = {
         id: "",
         name: listName.value,
     };
 
-    const db = getDatabase();
-    const currentUser = await getCurrentUser();
-
     if (currentUser) {
-        const listsRef = dbRef(db, `users/${currentUser.uid}/lists`);
+        const listsRef = dbRef(getDatabase(), `users/${currentUser.value?.uid}/lists`);
 
-        const newRef = await push(listsRef, newList);
-        newList.id = newRef.key!;
-
-        await set(newRef, newList);
-
-        goToList(newList.id);
+        push(listsRef, newList).then((ref) => { goToList(ref.key!) });
     }
 
 }
