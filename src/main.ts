@@ -2,7 +2,7 @@ import { createApp } from "vue";
 import { VueFire, VueFireAuth } from "vuefire";
 import App from "./App.vue";
 import router from "./router";
-import { firebaseApp } from "./firebaseInit";
+import { firebaseApp } from "./utils/firebaseUtils";
 
 // import "./assets/main.css";
 

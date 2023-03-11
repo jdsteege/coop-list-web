@@ -1,31 +1,15 @@
 <script setup lang="ts">
-import { getDatabase, push, ref as dbRef } from "firebase/database";
+import { pushNewList } from "@/utils/firebaseUtils";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { useCurrentUser } from "vuefire";
-import type { TaskList } from '../customTypes';
 
 const router = useRouter();
-const currentUser = useCurrentUser();
 
 const listName = ref("");
 
-function goToList(listId: string) {
-    router.push(`/list/${listId}`);
-}
-
 function createList() {
-    // create a new list and send it to firebase rtdb
-    let newList: TaskList = {
-        id: "",
-        name: listName.value,
-    };
 
-    if (currentUser) {
-        const listsRef = dbRef(getDatabase(), `users/${currentUser.value?.uid}/lists`);
-
-        push(listsRef, newList).then((ref) => { goToList(ref.key!) });
-    }
+    pushNewList({ name: listName.value }).then((ref) => { router.push(`/list/${ref.key}`); });
 
 }
 

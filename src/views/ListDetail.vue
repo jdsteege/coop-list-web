@@ -1,42 +1,23 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { useFirebaseAuth, getCurrentUser } from "vuefire";
-import { getDatabase, ref as dbRef, onValue, off } from "firebase/database";
+import { useList } from "@/utils/firebaseUtils";
+import { computed } from "vue";
+import { useRoute } from "vue-router";
 
-// type for lists
-interface List {
-    id: string;
-    name: string;
+const route = useRoute();
+
+function getParamsListId(): string {
+    const listIdRaw = route.params.listid;
+    if (typeof listIdRaw === "string") {
+        return listIdRaw;
+    } else {
+        return listIdRaw[0];
+    }
 }
 
-const isLoading = ref(true);
+const taskList = useList(getParamsListId());
 
-const requestedListId = ref<string | string[]>("");
-
-// fetch the requested list from firebase rtdb
-const list = ref<List | null>(null);
-
-onMounted(async () => {
-    const router = useRouter();
-    const route = useRoute();
-
-    requestedListId.value = route.params.listid;
-
-    const currentUser = await getCurrentUser();
-    isLoading.value = false;
-
-    if (currentUser) {
-        const db = getDatabase();
-        const listRef = dbRef(db, `users/${currentUser.uid}/lists/${route.params.listid}`);
-        onValue(listRef, (snapshot) => {
-            list.value = snapshot.val();
-        });
-
-        return () => {
-            off(listRef);
-        };
-    }
+const isLoading = computed(() => {
+    return taskList.value === undefined;
 });
 
 </script>
@@ -44,14 +25,14 @@ onMounted(async () => {
 <template>
     <router-link to="/lists">Back to lists</router-link>
 
-    <p>listId: {{ requestedListId }}</p>
+    <p>listId: {{ getParamsListId() }}</p>
     <div v-if="isLoading">
         <p>Loading...</p>
     </div>
     <div v-else>
-        <div v-if="list">
-            <p>List name: {{ list.name }}</p>
-            <p>List id: {{ list.id }}</p>
+        <div v-if="taskList">
+            <p>List name: {{ taskList.name }}</p>
+            <p>List id: {{ taskList.id }}</p>
         </div>
         <div v-else>
             <p>Could not find list</p>

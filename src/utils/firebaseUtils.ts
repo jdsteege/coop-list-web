@@ -4,10 +4,11 @@ import {
   equalTo,
   getDatabase,
   orderByChild,
+  push,
   query,
   ref as dbRef,
 } from "firebase/database";
-import { useDatabaseList, useDatabaseObject } from "vuefire";
+import { useCurrentUser, useDatabaseList, useDatabaseObject } from "vuefire";
 import type { Task, TaskList } from "./interfaces";
 
 // TODO: Add SDKs for Firebase products that you want to use
@@ -31,32 +32,54 @@ export const firebaseApp = initializeApp(firebaseConfig);
 // This happens automatically in main.ts: https://vuefire.vuejs.org/guide/auth.html#installation
 // getAuth(firebaseApp);
 
-export function getLists(userId: string): TaskList[] {
-  const listArray = useDatabaseList<TaskList>(
+export function useLists() {
+  const currentUser = useCurrentUser();
+  const userId = currentUser.value?.uid ?? "_invalid_user_id_";
+
+  return useDatabaseList<TaskList>(
     query(
       dbRef(getDatabase(), `lists`),
       orderByChild("owners"),
       equalTo(userId)
     )
   );
-  return listArray.value;
 }
 
-export function getList(listId: string): TaskList | undefined | null {
-  const list = useDatabaseObject<TaskList>(
-    dbRef(getDatabase(), `lists/${listId}`)
+export function useTasks(listId: string | undefined | null) {
+  if (!listId) {
+    listId = "_invalid_list_id_";
+  }
+
+  return useDatabaseList<Task>(
+    query(
+      dbRef(getDatabase(), `tasks`),
+      orderByChild("listId"),
+      equalTo(listId)
+    )
   );
-  return list.value;
 }
 
-export function getTasks(listId: string): Task[] {
-  const tasksArray = useDatabaseList<Task>(
-    dbRef(getDatabase(), `lists/${listId}/tasks`)
-  );
-  return tasksArray.value;
+export function useList(listId: string) {
+  return useDatabaseObject<TaskList>(dbRef(getDatabase(), `lists/${listId}`));
 }
 
-export function getTask(taskId: string): Task | undefined | null {
-  const task = useDatabaseObject<Task>(dbRef(getDatabase(), `tasks/${taskId}`));
-  return task.value;
+export function useTask(taskId: string) {
+  return useDatabaseObject<Task>(dbRef(getDatabase(), `tasks/${taskId}`));
+}
+
+export function pushNewList(listDetails: { name: string }) {
+  const currentUser = useCurrentUser();
+  const userId = currentUser.value?.uid ?? "_invalid_user_id_";
+
+  const pushListDetails = { owners: [userId], ...listDetails };
+
+  return push(dbRef(getDatabase(), `lists`), pushListDetails);
+}
+
+export function pushNewTask(taskDetails: {
+  label: string;
+  listId: string;
+  completed: boolean;
+}) {
+  return push(dbRef(getDatabase(), `tasks`), taskDetails);
 }

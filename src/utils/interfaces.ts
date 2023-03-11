@@ -10,6 +10,7 @@ export interface TaskList {
 
 export interface Task {
   id: string;
+  listId: string;
   label: string;
   completed: boolean;
 }

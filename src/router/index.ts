@@ -33,6 +33,10 @@ const routes = [
     path: "/list/:listid",
     component: () => import("../views/ListDetail.vue"),
   },
+  {
+    path: "/task/:taskid",
+    component: () => import("../views/TaskDetail.vue"),
+  },
 ];
 
 const router = createRouter({

@@ -1,13 +1,11 @@
 <script setup lang="ts">
 
-import { useRouter } from "vue-router";
 import { useCurrentUser, useDatabaseList } from 'vuefire'
 import { getDatabase, ref as dbRef } from 'firebase/database'
-import type { TaskList } from '../customTypes';
+import type { TaskList } from '../utils/interfaces';
+import { useLists } from '@/utils/firebaseUtils';
 
-const currentUser = useCurrentUser();
-const listArray = useDatabaseList<TaskList>(dbRef(getDatabase(), `users/${currentUser.value?.uid}/lists`));
-
+const listArray = useLists();
 
 </script>
 
