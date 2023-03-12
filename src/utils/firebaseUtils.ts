@@ -39,8 +39,8 @@ export function useLists() {
   return useDatabaseList<TaskList>(
     query(
       dbRef(getDatabase(), `lists`),
-      orderByChild("owners"),
-      equalTo(userId)
+      orderByChild("owners/" + userId),
+      equalTo(true)
     )
   );
 }
@@ -50,13 +50,20 @@ export function useTasks(listId: string | undefined | null) {
     listId = "_invalid_list_id_";
   }
 
-  return useDatabaseList<Task>(
+  // TODO: This seems to serve stale data when visiting a page that was previously
+  // visited with a different listId. I think either VueFire or Firebase is caching
+  // the reference when the path is identical, even though the query is different.
+  const result = useDatabaseList<Task>(
     query(
       dbRef(getDatabase(), `tasks`),
       orderByChild("listId"),
       equalTo(listId)
     )
   );
+
+  console.log("useTasks: " + JSON.stringify(result.value));
+
+  return result;
 }
 
 export function useList(listId: string) {
@@ -71,7 +78,8 @@ export function pushNewList(listDetails: { name: string }) {
   const currentUser = useCurrentUser();
   const userId = currentUser.value?.uid ?? "_invalid_user_id_";
 
-  const pushListDetails = { owners: [userId], ...listDetails };
+  const owners = { [userId]: true };
+  const pushListDetails = { owners: owners, ...listDetails };
 
   return push(dbRef(getDatabase(), `lists`), pushListDetails);
 }

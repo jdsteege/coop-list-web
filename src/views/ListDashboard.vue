@@ -1,12 +1,7 @@
 <script setup lang="ts">
-
-import { useCurrentUser, useDatabaseList } from 'vuefire'
-import { getDatabase, ref as dbRef } from 'firebase/database'
-import type { TaskList } from '../utils/interfaces';
 import { useLists } from '@/utils/firebaseUtils';
 
 const listArray = useLists();
-
 </script>
 
 <template>

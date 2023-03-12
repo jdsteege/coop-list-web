@@ -7,9 +7,14 @@ const route = useRoute();
 
 function getParamsTaskId(): string {
   const taskIdRaw = route.params.taskid;
-  if (typeof taskIdRaw === "string") {
+
+  if (taskIdRaw === undefined) {
+    return "";
+  } else if (typeof taskIdRaw === "string") {
+
     return taskIdRaw;
   } else {
+
     return taskIdRaw[0];
   }
 }
@@ -26,6 +31,7 @@ const isLoading = computed(() => {
   <router-link :to="'/list/' + task?.listId">Back to list</router-link>
 
   <p>taskId: {{ getParamsTaskId() }}</p>
+
   <div v-if="isLoading">
     <p>Loading...</p>
   </div>

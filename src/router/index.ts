@@ -22,12 +22,12 @@ const routes = [
     component: () => import("../views/ListDashboard.vue"),
   },
   {
-    path: "/task/:id",
-    component: () => import("../views/TaskDetail.vue"),
-  },
-  {
     path: "/create-list",
     component: () => import("../views/CreateList.vue"),
+  },
+  {
+    path: "/create-task/:listid",
+    component: () => import("../views/CreateTask.vue"),
   },
   {
     path: "/list/:listid",
